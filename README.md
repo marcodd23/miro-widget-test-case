@@ -1,4 +1,4 @@
-# backbase-kalaha-game
+# miro-widget-app
 
 ##### Author: Marco Di Dionisio
 
@@ -14,7 +14,7 @@
     ● Submit sources via a public git repository. 
 
 ##### Optional point implemented
-    ● Two storage implementation have been developed: In Memory and and SQL DB (H2)
+    ● Two storage implementation have been developed: one in Memory with a Java Map and one with SQL DB (H2) in memory
       The two are triggered based on the spring profile used :
         - "memory"
         - "database 
@@ -32,6 +32,8 @@ The data model is the Widget entity:
                 "yindex": 22
                 "modificationDate": "2020-02-04T14:28:05.655",
             }
+            
+ To manage the concurrent read and write and preserve the consistency of reading I used the ReadWriteLock Java interface
             
 # To build the application:
     $ mvn clean install
