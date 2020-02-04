@@ -58,7 +58,8 @@ The data model is the Widget entity:
 # To build the application:
     $ mvn clean install
     
-    ![Test Coverage](coverage.png)
+# Test coverage:
+![Test Coverage](coverage.png)
     
 # To run the application type the command:
     $ mvn spring-boot:run -Dspring-boot.run.profiles=memory ==> It will run the application with in Memory storage profile
