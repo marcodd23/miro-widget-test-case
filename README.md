@@ -1,4 +1,4 @@
-# backbase-kalaha-game
+# miro-widget-app
 
 ##### Author: Marco Di Dionisio
 
