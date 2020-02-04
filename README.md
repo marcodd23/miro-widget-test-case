@@ -58,6 +58,7 @@ The data model is the Widget entity:
 # To build the application:
     $ mvn clean install
     
+# Test coverage:
 ![Test Coverage](coverage.png)
     
 # To run the application type the command:
