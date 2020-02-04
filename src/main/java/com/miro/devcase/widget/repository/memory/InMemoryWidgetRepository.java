@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
-@Profile("in-memory-storage")
+@Profile("memory")
 public class InMemoryWidgetRepository implements WidgetRepository {
 
     private final int Z_STEP = 1;
