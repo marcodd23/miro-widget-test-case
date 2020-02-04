@@ -26,6 +26,9 @@ public class WidgetServiceImpl implements WidgetService {
         if (widget == null) {
             throw new IllegalArgumentException("{\"error\":\"Widget can't be null\"}");
         }
+        if (widget.getWidgetId() != null) {
+            throw new IllegalArgumentException("{\"error\":\"Widget ID have to be null when creating a new Widget\"}");
+        }
         log.debug("Creating a widget {}", widget);
         widget.setWidgetId(null);
         return widgetRepository.save(widget);

@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -51,7 +53,7 @@ class InMemoryWidgetRepositoryTest {
     }
 
     @Test
-    void testAddWidgetWithoutZetaIndex(){
+    void testAddWidgeWithZetaIndexNull_isAddedAtTheTop(){
         Widget widgetMock = WidgetMocks.createWidgetMock(100);
         Widget savedWidget = widgetRepository.save(widgetMock);
         Widget widgetMock2 = WidgetMocks.createWidgetMock(null);
@@ -63,7 +65,7 @@ class InMemoryWidgetRepositoryTest {
     }
 
     @Test
-    void testAddWidgetAndShift(){
+    void testCreateWidgetWithCollisionAndShift(){
         Widget widgetMock1 = WidgetMocks.createWidgetMock(100);
         Widget widgetMock2 = WidgetMocks.createWidgetMock(101);
         Widget widgetMock3 = WidgetMocks.createWidgetMock(102);
@@ -81,8 +83,60 @@ class InMemoryWidgetRepositoryTest {
         Assertions.assertEquals(101, widgetSaved1.getZIndex());
         Assertions.assertEquals(102, widgetSaved2.getZIndex());
         Assertions.assertEquals(103, widgetSaved3.getZIndex());
+    }
 
+    @Test
+    void testUpdateWidgetWithCollisionAndShift(){
+        Widget widgetMock1 = WidgetMocks.createWidgetMock(100);
+        Widget widgetMock2 = WidgetMocks.createWidgetMock(102);
+        Widget widgetMock3 = WidgetMocks.createWidgetMock(104);
+        widgetRepository.save(widgetMock1);
+        widgetRepository.save(widgetMock2);
+        widgetRepository.save(widgetMock3);
 
+        //Update Z-index of widgetSaved3
+        Widget updatedWidgetRequest = WidgetMocks.createWidgetMockWithId(100, widgetMock3.getWidgetId());
+        widgetRepository.save(updatedWidgetRequest);
+
+        Assertions.assertEquals(3, widgetRepository.findAll().size());
+        Widget widgetUpdated1 = widgetRepository.findById(1L).orElse(null);
+        Widget widgetUpdated2 = widgetRepository.findById(2L).orElse(null);
+        Widget widgetUpdated3 = widgetRepository.findById(3L).orElse(null);
+        Assertions.assertNotNull(widgetUpdated1);
+        Assertions.assertNotNull(widgetUpdated2);
+        Assertions.assertNotNull(widgetUpdated3);
+        Assertions.assertEquals(101, widgetUpdated1.getZIndex());
+        Assertions.assertEquals(103, widgetUpdated2.getZIndex());
+        Assertions.assertEquals(100, widgetUpdated3.getZIndex());
+    }
+
+    @Test
+    void testFindWidgetById(){
+        Widget widgetMock = WidgetMocks.createWidgetMock(100);
+        Widget savedWidget = widgetRepository.save(widgetMock);
+        Optional<Widget> retrievedWidget = widgetRepository.findById(savedWidget.getWidgetId());
+        Assertions.assertNotNull(retrievedWidget.get());
+    }
+
+    @Test
+    void testFindAll(){
+        Widget widgetMock1 = WidgetMocks.createWidgetMock(100);
+        Widget widgetMock2 = WidgetMocks.createWidgetMock(101);
+        Widget widgetMock3 = WidgetMocks.createWidgetMock(102);
+        widgetRepository.save(widgetMock1);
+        widgetRepository.save(widgetMock2);
+        widgetRepository.save(widgetMock3);
+        Collection<Widget> all = widgetRepository.findAll();
+        Assertions.assertEquals(3, all.size());
+    }
+
+    @Test
+    void testDeleteById(){
+        Widget widgetMock = WidgetMocks.createWidgetMock(100);
+        Widget widgetSaved = widgetRepository.save(widgetMock);
+        widgetRepository.deleteById(widgetSaved.getWidgetId());
+        Optional<Widget> widgetRetrieved = widgetRepository.findById(widgetSaved.getWidgetId());
+        Assertions.assertFalse(widgetRetrieved.isPresent());
     }
 
 }

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Profile("in-memory-storage")
 public class InMemoryWidgetRepository implements WidgetRepository {
 
+    private final int Z_STEP = 1;
     private final Lock readLock;
     private final Lock writeLock;
     private static volatile Long widgetIdentifier = 0L;
@@ -72,38 +73,28 @@ public class InMemoryWidgetRepository implements WidgetRepository {
     }
 
     private void insertWidgetAndShift(final Widget widget, final boolean shift) {
+        //Switch widgets on Z index
         if (shift) {
-            Integer zIndexStart = widget.getZIndex();
-            Widget prevWidgetAtZetaPosition = widgetStorage.get(zetaIndexStorage.get(zIndexStart));
-            //shift element at Z-index widget
-            Optional.ofNullable(prevWidgetAtZetaPosition).ifPresent(w -> {
-                w.setZIndex(zIndexStart + 1);
-                w.setModificationDate(LocalDateTime.now());
-            });
+            Optional.ofNullable(widget)
+                    .map(newWidget -> widgetStorage.get(newWidget.getWidgetId()))
+                    .ifPresent(oldWidget -> {
+                        log.debug("removing from ZetaIndexMap the old widget: {}", oldWidget);
+                        zetaIndexStorage.remove(oldWidget.getZIndex());
+                    });
+            List<Integer> zetaIndexReverseKeySubList = new ArrayList<>(zetaIndexStorage
+                    .navigableKeySet()
+                    .subSet(widget.getZIndex(), true, zetaIndexStorage.lastKey(), true)
+                    .descendingSet());
 
-            for (Map.Entry<Integer, Long> entry : zetaIndexStorage.entrySet()) {
-                Widget currentWidgetAtZetaPosition;
-                Integer z = entry.getKey();
-                Long id = entry.getValue();
-                //Start to shift at Z-index + 1
-                if (z <= widget.getZIndex()) {
-                    continue;
-                }
-                currentWidgetAtZetaPosition = widgetStorage.get(id);
-                Optional.ofNullable(currentWidgetAtZetaPosition).ifPresent(w -> {
-                    w.setZIndex(z + 1);
-                    w.setModificationDate(LocalDateTime.now());
-                });
-                //Store the prev shifted
-                if (prevWidgetAtZetaPosition != null) {
-                    zetaIndexStorage.put(prevWidgetAtZetaPosition.getZIndex(), prevWidgetAtZetaPosition.getWidgetId());
-                }
-                prevWidgetAtZetaPosition = currentWidgetAtZetaPosition;
-            }
-            //Shift last element
-            zetaIndexStorage.put(prevWidgetAtZetaPosition.getZIndex(), prevWidgetAtZetaPosition.getWidgetId());
+            zetaIndexReverseKeySubList.forEach(z -> {
+                Long widgetIdToSwitch = zetaIndexStorage.get(z);
+                Widget widgetToSwitch = widgetStorage.get(widgetIdToSwitch);
+                Integer newZeta = z + Z_STEP;
+                widgetToSwitch.setZIndex(newZeta);
+                zetaIndexStorage.remove(z);
+                zetaIndexStorage.put(newZeta, widgetIdToSwitch);
+            });
         }
-        widget.setModificationDate(LocalDateTime.now());
         widgetStorage.put(widget.getWidgetId(), widget);
         zetaIndexStorage.put(widget.getZIndex(), widget.getWidgetId());
     }
