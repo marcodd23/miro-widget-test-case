@@ -32,6 +32,16 @@ The data model is the Widget entity:
                 "yindex": 22
                 "modificationDate": "2020-02-04T14:28:05.655",
             }
+            
+# To build the application:
+    $ mvn clean install
+            
+# To run the application type the command:
+    $ mvn spring-boot:run -Dspring-boot.run.profiles=memory ==> It will run the application with in Memory storage profile
+    
+    $ mvn spring-boot:run -Dspring-boot.run.profiles=database ==> It will run the application with in H2 in memory Database storage profile
+  
+  It will run the application in an embedded tomcat server listening on the port 8080
 
 # The app expose :
 
@@ -54,18 +64,9 @@ The data model is the Widget entity:
     - GET /api/widgets/{id} --> retrieve a Widget by its identifier.
     
     - GET /api/widgets/all --> retrieve all widgets ordering them by Z-Index ascending
-
-# To build the application:
-    $ mvn clean install
     
 # Test coverage:
 ![Test Coverage](coverage.png)
     
-# To run the application type the command:
-    $ mvn spring-boot:run -Dspring-boot.run.profiles=memory ==> It will run the application with in Memory storage profile
-    
-    $ mvn spring-boot:run -Dspring-boot.run.profiles=database ==> It will run the application with in H2 in memory Database storage profile
-  
-  It will run the application in an embedded tomcat server listening on the port 8080
 
 
