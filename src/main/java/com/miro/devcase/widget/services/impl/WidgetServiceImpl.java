@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,11 +27,8 @@ public class WidgetServiceImpl implements WidgetService {
         if (widget == null) {
             throw new IllegalArgumentException("{\"error\":\"Widget can't be null\"}");
         }
-        if (widget.getWidgetId() != null) {
-            throw new IllegalArgumentException("{\"error\":\"Widget ID have to be null when creating a new Widget\"}");
-        }
-        log.debug("Creating a widget {}", widget);
         widget.setWidgetId(null);
+        log.debug("Creating a widget {}", widget);
         return widgetRepository.save(widget);
     }
 
@@ -65,7 +63,7 @@ public class WidgetServiceImpl implements WidgetService {
     }
 
     @Override
-    public Collection<Widget> findAllWidgets() {
+    public List<Widget> findAllWidgets() {
         log.debug("Find all Widgets");
         return widgetRepository.findAll();
     }

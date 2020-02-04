@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -130,7 +129,7 @@ public class InMemoryWidgetRepository implements WidgetRepository {
     }
 
     @Override
-    public Collection<Widget> findAll() {
+    public List<Widget> findAll() {
         readLock.lock();
         try {
             return zetaIndexStorage

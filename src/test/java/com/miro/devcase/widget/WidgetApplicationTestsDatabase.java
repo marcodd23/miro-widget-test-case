@@ -5,11 +5,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-@ActiveProfiles("memory")
-class WidgetApplicationTests {
+@ActiveProfiles("database")
+public class WidgetApplicationTestsDatabase {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void contextLoads() {
+    }
 }

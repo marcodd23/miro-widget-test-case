@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -62,6 +62,25 @@ class InMemoryWidgetRepositoryTest {
         Assertions.assertEquals(2L, savedWidget2.getWidgetId());
         Assertions.assertEquals(100, savedWidget.getZIndex());
         Assertions.assertEquals(101, savedWidget2.getZIndex());
+    }
+
+    @Test
+    void testMultipleCuncurrentSaveCall() throws Exception {
+        int numThread = 10;
+        int insertPerThread = 100;
+        List<CompletableFuture> futuresResuts = new ArrayList<>(numThread*insertPerThread);
+        for (int i = 0; i < numThread; i++) {
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                for (int j = 0; j < insertPerThread; j++) {
+                    Widget widgetMock = WidgetMocks.createWidgetMock(j);
+                    widgetRepository.save(widgetMock);
+                }
+            });
+            futuresResuts.add(future);
+        }
+
+        CompletableFuture.allOf(futuresResuts.toArray(new CompletableFuture[]{})).get(5, TimeUnit.SECONDS);
+        Assertions.assertEquals(1000, widgetRepository.findAll().size());
     }
 
     @Test

@@ -1,10 +1,10 @@
 CREATE TABLE IF NOT EXISTS widget (
-    widgetId LONG NOT NULL AUTO_INCREMENT,
+    widgetId bigint(20) NOT NULL AUTO_INCREMENT,
     xIndex INTEGER,
     yIndex INTEGER,
-    zIndex INTEGER not null,
+    zIndex INTEGER,
     width INTEGER,
     height INTEGER,
-    modificationDate DATE not null,
+    modificationDate TIMESTAMP not null,
     PRIMARY KEY (widgetId)
 );

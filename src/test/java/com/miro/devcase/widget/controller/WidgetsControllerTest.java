@@ -30,9 +30,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @ExtendWith(SpringExtension.class)
@@ -90,4 +91,47 @@ class WidgetsControllerTest {
         Widget widget = objectMapper.readValue(contentAsString, Widget.class);
         Assertions.assertEquals(7, widget.getZIndex());
     }
+
+    @Test
+    void deleteWidgetTest() throws Exception {
+        Widget widgetMock = WidgetMocks.createWidgetMockWithId(6, 1L);
+        Mockito.doNothing().when(widgetService).deleteWidget(Mockito.any());
+        mockMvc.perform(delete(BASE_URL + "/1")
+                .content(objectMapper.writeValueAsBytes(widgetMock))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    void deleteWidgetTestReturnException() throws Exception {
+        Widget widgetMock = WidgetMocks.createWidgetMockWithId(6, 1L);
+        Mockito.doThrow(new IllegalArgumentException("{\"error\":\"Widget ID can't be null\"}"))
+                .when(widgetService).deleteWidget(Mockito.any());
+        mockMvc.perform(delete(BASE_URL + "/1")
+                .content(objectMapper.writeValueAsBytes(widgetMock))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+    }
+
+
+    @Test
+    void findByIdTest() throws Exception {
+        Widget widgetMock = WidgetMocks.createWidgetMockWithId(6, 1L);
+        Mockito.doReturn(Optional.of(widgetMock)).when(widgetService).findWidgetById(Mockito.anyLong());
+        String contentAsString = mockMvc.perform(get(BASE_URL + "/1")
+                .content(objectMapper.writeValueAsBytes(widgetMock))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn().getResponse().getContentAsString();
+        Widget widget = objectMapper.readValue(contentAsString, Widget.class);
+        Assertions.assertEquals(1L, widget.getWidgetId());
+        Assertions.assertEquals(6, widget.getZIndex());
+    }
+
 }
