@@ -40,6 +40,15 @@ The data model is the Widget entity:
     $ mvn spring-boot:run -Dspring-boot.run.profiles=memory ==> It will run the application with in Memory storage profile
     
     $ mvn spring-boot:run -Dspring-boot.run.profiles=database ==> It will run the application with in H2 in memory Database storage profile
+       
+When running the "memory" profile a H2 database in memory is speeding up, with a management console at url:
+        
+        ● http://localhost:8080/h2-console
+        
+with username "sa" and empty password: 
+
+         ● username: sa
+         ● password: <empty>
   
   It will run the application in an embedded tomcat server listening on the port 8080
 
