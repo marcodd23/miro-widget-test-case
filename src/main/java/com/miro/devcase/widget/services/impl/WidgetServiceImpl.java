@@ -43,12 +43,12 @@ public class WidgetServiceImpl implements WidgetService {
     }
 
     @Override
-    public void deleteWidget(Long id) {
+    public boolean deleteWidget(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("{\"error\":\"Widget ID can't be null\"}");
         }
         log.debug("Removing a widget {}", id);
-        widgetRepository.deleteById(id);
+        return widgetRepository.deleteById(id);
     }
 
     @Override

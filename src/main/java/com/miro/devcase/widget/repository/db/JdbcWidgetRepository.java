@@ -34,7 +34,7 @@ public class JdbcWidgetRepository implements WidgetRepository {
     public Widget save(Widget widget) {
         if (widget.getZIndex() != null) {
             Optional<Widget> collidinWidget = findByZIndex(widget.getZIndex());
-            collidinWidget.ifPresent(w -> updateBatchWidgets(w.getZIndex()));
+            collidinWidget.ifPresent(w -> switchAllWidgetsOnZindex(w.getZIndex()));
         }
         if (widget.getWidgetId() == null) {
             long widgetId = saveWidgetInfo(widget);
@@ -111,7 +111,7 @@ public class JdbcWidgetRepository implements WidgetRepository {
         return resultSet;
     }
 
-    private int[] updateBatchWidgets(Integer zIndexCollision) {
+    private int[] switchAllWidgetsOnZindex(Integer zIndexCollision) {
         List<Widget> widgets = findAllWidgetWithZIndexBiggerOrEqual(zIndexCollision);
         return jdbcTemplate.batchUpdate(
                 "update widget set zIndex = ? where widgetId=?",
@@ -147,8 +147,8 @@ public class JdbcWidgetRepository implements WidgetRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
-
+    public boolean deleteById(Long id) {
+        return jdbcTemplate.update("delete from widget where widgetId=?", id) == 1;
     }
 
     @Override

@@ -150,12 +150,19 @@ class InMemoryWidgetRepositoryTest {
     }
 
     @Test
-    void testDeleteById(){
+    void testDeleteExistingWidgetById(){
         Widget widgetMock = WidgetMocks.createWidgetMock(100);
         Widget widgetSaved = widgetRepository.save(widgetMock);
-        widgetRepository.deleteById(widgetSaved.getWidgetId());
+        boolean result = widgetRepository.deleteById(widgetSaved.getWidgetId());
         Optional<Widget> widgetRetrieved = widgetRepository.findById(widgetSaved.getWidgetId());
         Assertions.assertFalse(widgetRetrieved.isPresent());
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    void testDeleteNotExistingWidgetById(){
+        boolean result = widgetRepository.deleteById(1L);
+        Assertions.assertFalse(result);
     }
 
 }

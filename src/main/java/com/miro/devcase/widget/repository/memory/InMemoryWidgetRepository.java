@@ -143,14 +143,19 @@ public class InMemoryWidgetRepository implements WidgetRepository {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public boolean deleteById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("{\"error\":\"Widget ID can't be null\"}");
         }
         writeLock.lock();
         try {
-            Widget removedWidget = widgetStorage.remove(id);
-            zetaIndexStorage.remove(removedWidget.getZIndex());
+            if (widgetStorage.containsKey(id)) {
+                Widget removedWidget = widgetStorage.remove(id);
+                zetaIndexStorage.remove(removedWidget.getZIndex());
+                return true;
+            } else {
+                return false;
+            }
         } finally {
             writeLock.unlock();
         }

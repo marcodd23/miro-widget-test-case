@@ -11,7 +11,7 @@ public interface WidgetService {
 
     Widget updateWidget(Widget widget);
 
-    void deleteWidget(Long id);
+    boolean deleteWidget(Long id);
 
     Optional<Widget> findWidgetById(Long id);
 

@@ -37,8 +37,10 @@ public class WidgetsController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") Long id) {
-        widgetService.deleteWidget(id);
-        return ResponseEntity.ok().build();
+        if(widgetService.deleteWidget(id))
+            return ResponseEntity.ok().build();
+        else
+            return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}")
@@ -52,8 +54,6 @@ public class WidgetsController {
     public Collection<Widget> getAll() {
         return widgetService.findAllWidgets();
     }
-
-
 
 
 

@@ -93,14 +93,26 @@ class WidgetsControllerTest {
     }
 
     @Test
-    void deleteWidgetTest() throws Exception {
+    void deleteWidgetTest_OK() throws Exception {
         Widget widgetMock = WidgetMocks.createWidgetMockWithId(6, 1L);
-        Mockito.doNothing().when(widgetService).deleteWidget(Mockito.any());
+        Mockito.doReturn(true).when(widgetService).deleteWidget(Mockito.any());
         mockMvc.perform(delete(BASE_URL + "/1")
                 .content(objectMapper.writeValueAsBytes(widgetMock))
                 .contentType(MediaType.APPLICATION_JSON)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    void deleteWidgetTest_NOT_FOUND() throws Exception {
+        Widget widgetMock = WidgetMocks.createWidgetMockWithId(6, 1L);
+        Mockito.doReturn(false).when(widgetService).deleteWidget(Mockito.any());
+        mockMvc.perform(delete(BASE_URL + "/1")
+                .content(objectMapper.writeValueAsBytes(widgetMock))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andReturn();
     }
 

@@ -19,7 +19,7 @@
         - "memory"
         - "database 
  
-The app is a Spring Boot Application. It run in an embedded tomcat server listening on the port 8080
+The app is a Spring Boot Application. It runs in an embedded tomcat server listening on port 8080
     -  http://localhost:8080/api/widgets/     
 The data model is the Widget entity: 
             

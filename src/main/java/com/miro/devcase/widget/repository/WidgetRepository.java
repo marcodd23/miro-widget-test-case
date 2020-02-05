@@ -13,7 +13,7 @@ public interface WidgetRepository {
 
     List<Widget> findAll();
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 
     void resetMemory();
 
